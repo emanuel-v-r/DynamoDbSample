@@ -15,7 +15,7 @@ namespace DynamoDbSample
 
 		public DynamoRepo(IAmazonDynamoDB dynamoDb, string tableName)
 		{
-			// GetResult() hammer for sake of simplification
+			// GetResult() hammer in sake of simplification
 			CreateTableIfNotExists(dynamoDb, tableName).GetAwaiter().GetResult();
 
 			_table = Table.LoadTable(dynamoDb, tableName);
@@ -35,28 +35,6 @@ namespace DynamoDbSample
 			Console.WriteLine($"Retrieved Json {json}. This should come with an empty string");
 
 			return JsonSerializer.Deserialize<TDbEntity>(json, JsonSerialization.Settings);
-		}
-
-		public async Task<TDbEntity> Get(string key, string rangeKey)
-		{
-			if (rangeKey == null)
-			{
-				throw new ArgumentNullException(nameof(rangeKey));
-			}
-
-			var item = await _table.GetItemAsync(key, rangeKey).ConfigureAwait(false);
-
-			if (item == null)
-			{
-				return null;
-			}
-
-			return JsonSerializer.Deserialize<TDbEntity>(item.ToJson(), JsonSerialization.Settings);
-		}
-
-		public Task Delete(string key, string rangeKey)
-		{
-			return _table.DeleteItemAsync(key, rangeKey);
 		}
 
 		public Task Store(TDbEntity entity)
