@@ -1,0 +1,19 @@
+version: '3.3'
+
+services:
+  dynamo:
+    image: amazon/dynamodb-local:1.17.0
+    deploy:
+      restart_policy:
+        condition: on-failure
+    command: "-jar DynamoDBLocal.jar -sharedDb -dbPath /home/dynamodblocal"
+    hostname: dynamo
+    ports:
+      - "8000:8000"
+    environment:
+      - reschedule=on-node-failure
+    volumes:
+      - dynamodb_data:/home/dynamodblocal
+
+volumes:
+  dynamodb_data:
